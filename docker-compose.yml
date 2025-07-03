@@ -1,7 +1,7 @@
 ---
 services:
   s-ui:
-    image: laowangi888/s-ui-cn
+    image: alireza7/s-ui
     container_name: s-ui
     hostname: "s-ui"
     volumes:
