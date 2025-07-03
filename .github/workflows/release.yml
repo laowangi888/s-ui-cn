@@ -1,0 +1,113 @@
+name: Release S-UI
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform:
+          - amd64
+          - arm64
+          - armv7
+          - armv6
+          - armv5
+          - 386
+          - s390x
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          cache: false
+          go-version-file: go.mod
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          if [ "${{ matrix.platform }}" == "arm64" ]; then
+            sudo apt install gcc-aarch64-linux-gnu
+          elif [ "${{ matrix.platform }}" == "armv7" ]; then
+            sudo apt install gcc-arm-linux-gnueabihf
+          elif [ "${{ matrix.platform }}" == "armv6" ]; then
+            sudo apt install gcc-arm-linux-gnueabihf
+          elif [ "${{ matrix.platform }}" == "armv5" ]; then
+            sudo apt install gcc-arm-linux-gnueabi
+          elif [ "${{ matrix.platform }}" == "386" ]; then
+            sudo apt install gcc-i686-linux-gnu
+          elif [ "${{ matrix.platform }}" == "s390x" ]; then
+            sudo apt install gcc-s390x-linux-gnu
+          fi
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          cd ..
+          mv frontend/dist web/html
+          rm -fr frontend
+
+      - name: Build s-ui
+        run: |
+          export CGO_ENABLED=1
+          export GOOS=linux
+          export GOARCH=${{ matrix.platform }}
+          if [ "${{ matrix.platform }}" == "arm64" ]; then
+            export GOARCH=arm64
+            export CC=aarch64-linux-gnu-gcc
+          elif [ "${{ matrix.platform }}" == "armv7" ]; then
+            export GOARCH=arm
+            export GOARM=7
+            export CC=arm-linux-gnueabihf-gcc
+          elif [ "${{ matrix.platform }}" == "armv6" ]; then
+            export GOARCH=arm
+            export GOARM=6
+            export CC=arm-linux-gnueabihf-gcc
+          elif [ "${{ matrix.platform }}" == "armv5" ]; then
+            export GOARCH=arm
+            export GOARM=5
+            export CC=arm-linux-gnueabi-gcc
+          elif [ "${{ matrix.platform }}" == "386" ]; then
+            export GOARCH=386
+            export CC=i686-linux-gnu-gcc
+          elif [ "${{ matrix.platform }}" == "s390x" ]; then
+            export GOARCH=s390x
+            export CC=s390x-linux-gnu-gcc
+          fi
+
+          ### Build s-ui
+          go build -ldflags="-w -s" -tags "with_quic,with_grpc,with_utls,with_acme,with_gvisor" -o sui main.go
+
+          mkdir s-ui
+          cp sui s-ui/
+          cp s-ui.service s-ui/
+          cp s-ui.sh s-ui/
+
+      - name: Package
+        run: tar -zcvf s-ui-linux-${{ matrix.platform }}.tar.gz s-ui
+
+      - name: Upload
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          file: s-ui-linux-${{ matrix.platform }}.tar.gz
+          asset_name: s-ui-linux-${{ matrix.platform }}.tar.gz
+          prerelease: true
+          overwrite: true

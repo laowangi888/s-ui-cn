@@ -1,0 +1,25 @@
+.DS_Store
+dist/
+release/
+backup/
+bin/
+db/
+sui
+web/html
+main
+tmp
+.sync*
+*.tar.gz
+frontend/
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+*.log*
+.cache
+
+# Editor directories and files
+.idea
+.vscode
