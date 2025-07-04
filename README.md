@@ -24,11 +24,11 @@
 [API-Documentation Wiki](https://github.com/alireza0/s-ui/wiki/API-Documentation)
 
 ## 默认安装信息
-- Panel Port: 2095
-- Panel Path: /app/
-- Subscription Port: 2096
-- Subscription Path: /sub/
-- User/Password: admin
+- 面板端口: 2095
+- 面板路径: /app/
+- 订阅端口: 2096
+- 订阅路径: /sub/
+- 用户/密码: admin
 
 ## 安装并升级到最新版本
 
@@ -73,7 +73,7 @@ rm /usr/bin/s-ui
 <details>
    <summary>点击了解详情</summary>
 
-### Usage
+### 用法
 
 **第 1 步:** 安装 Docker
 
