@@ -21,7 +21,7 @@
 
 ## API 文档
 
-[API-Documentation Wiki](https://github.com/alireza0/s-ui/wiki/API-Documentation)
+[API 文档](https://github.com/alireza0/s-ui/wiki/API-Documentation)
 
 ## 默认安装信息
 - 面板端口: 2095
