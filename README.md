@@ -134,7 +134,7 @@ git submodule update --init --recursive
 
 ### - 前端
 
-访问 [s-ui-frontend](https://github.com/alireza0/s-ui-frontend) 前端代码
+访问 [s-ui](https://github.com/alireza0/s-ui-frontend) 前端代码
 
 ### - 后端
 > 在此之前构建一次前端！
