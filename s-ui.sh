@@ -727,10 +727,10 @@ ssl_cert_issue_CF() {
 
                 CF_Domain=""
                 if [ ! -d "$certPath" ]; then
-                    mkdir -p $certPath
+                    mkdir $certPath
                 else
                     rm -rf $certPath
-                    mkdir -p $certPath
+                    mkdir $certPath
                 fi
 
                 LOGD "请设置域名:"
